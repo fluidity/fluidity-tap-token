@@ -12,18 +12,18 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable {
 
     // Parameters provided in the constructor
     bytes public CUSIP;
-    uint256 public totalFaceValue;
+    uint256 public totalFaceValue;       // TODO finalize number of decimal places stored - currently 0
     uint256 public issueDate;
     uint8 public payFrequency;
     uint8 public tenor;                  // in days
     uint8 public coupon;
-    address public custodianAddress;
+    address public custodianAddress;     // TODO this might have to be a bytes32 for an alphanumeric string
     uint256 public rate;
-    uint256 public rateMultiplier;        // rate / rateMultiplier = percentage
+    uint256 public rateMultiplier;       // rate / rateMultiplier = percentage
 
     // Values calculated
     uint256 public maturityDate;
-    uint256 public currentPriceOfPool;
+    uint256 public currentPriceOfPool;   // TODO finalize number of decimal places stored - currently 0
 
 
     constructor(
@@ -36,7 +36,7 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable {
         uint8 _payFrequency,
         uint8 _tenor,
         uint8 _coupon,
-        address _custodianAddress,    // this might have to be a bytes32 for an alphanumeric string
+        address _custodianAddress,
         uint256 _rate,
         uint256 _rateMultiplier
     )
