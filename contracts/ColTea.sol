@@ -59,7 +59,13 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable {
 
     }
 
-    function updatePriceOfPool() public {
+    // TODO access on this
+    function updateRate(uint8 _newRate) external onlyMinter {
+        rate = _newRate;
+        updatePriceOfPool();
+    }
+
+    function updatePriceOfPool() internal {
         // These retain the value 0 if the maturity date has passed
         uint256 daysToMaturity;
         uint256 discount;
@@ -69,11 +75,5 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable {
         }
         currentPriceOfPool = totalFaceValue.sub(discount);
     }
-
-    // TODO access on this
-    function updateRate(uint8 _newRate) external onlyMinter {
-        rate = _newRate;
-        updatePriceOfPool();
-    }
-
+    
 }
