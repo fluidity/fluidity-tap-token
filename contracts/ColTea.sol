@@ -66,14 +66,13 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable {
     }
 
     function updatePriceOfPool() internal {
-        // These retain the value 0 if the maturity date has passed
-        uint256 daysToMaturity;
-        uint256 discount;
         if (now < maturityDate) {
-            daysToMaturity = BokkyPooBahsDateTimeLibrary.diffDays(now, maturityDate);
-            discount = totalFaceValue.mul(rate.mul(daysToMaturity)) / rateMultiplier.mul(360);
+            uint256 daysToMaturity = BokkyPooBahsDateTimeLibrary.diffDays(now, maturityDate);
+            uint256 discount = totalFaceValue.mul(rate.mul(daysToMaturity)) / rateMultiplier.mul(360);
+            currentPriceOfPool = totalFaceValue.sub(discount);
+        } else {
+            currentPriceOfPool = totalFaceValue;
         }
-        currentPriceOfPool = totalFaceValue.sub(discount);
     }
-    
+
 }
