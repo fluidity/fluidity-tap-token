@@ -2,10 +2,8 @@
 
 const ColTea = artifacts.require('./ColTea')
 
-const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000'
-
 contract('ColTea', async (accounts) => {
-  const name = "52 week US Treasuries"
+  const name = '52 week US Treasuries'
   const symbol = 'USTB'
   const decimals = 6
   const faceValue = 100000
@@ -19,7 +17,7 @@ contract('ColTea', async (accounts) => {
     colttoken = await ColTea.new(
       name, // name
       symbol, // symbol
-      decimals, //decimals
+      decimals, // decimals
       web3.utils.fromAscii(CUSIP).slice(0, 20), // CUSIP
       faceValue, // FaceValue
       JUL_3_12_00_00_UTC_2020, // maturityDate
@@ -38,7 +36,6 @@ contract('ColTea', async (accounts) => {
     })
 
     it('checking the decimals', async function () {
-      let apn = await colttoken.decimals.call()
       assert.equal(decimals, await colttoken.decimals.call(), 'The decimal was not set correctly')
     })
 
@@ -55,11 +52,11 @@ contract('ColTea', async (accounts) => {
     })
 
     it('checking the custodian address', async function () {
-      assert.equal(custodianAddress,  await colttoken.custodianAddress.call(), 'The custodian address was not set correctly')
+      assert.equal(custodianAddress, await colttoken.custodianAddress.call(), 'The custodian address was not set correctly')
     })
 
     it('checking the custodian identifier', async function () {
-       assert.equal(custodianIdentifier,  await colttoken.custodianIdentifier.call(), 'The custodian identifier was not set correctly')
+      assert.equal(custodianIdentifier, await colttoken.custodianIdentifier.call(), 'The custodian identifier was not set correctly')
     })
   })
 })
