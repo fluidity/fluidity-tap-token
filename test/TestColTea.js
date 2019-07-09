@@ -7,7 +7,7 @@ contract('ColTea', async (accounts) => {
   const symbol = 'USTB'
   const decimals = 6
   const faceValue = 100000
-  const CUSIP = '912794SL4'
+  const cusip = '912794SL4'
   const JUL_3_12_00_00_UTC_2020 = 159377760015
   const custodianAddress = '0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF'
   const custodianIdentifier = 1111
@@ -18,7 +18,7 @@ contract('ColTea', async (accounts) => {
       name, // name
       symbol, // symbol
       decimals, // decimals
-      web3.utils.fromAscii(CUSIP).slice(0, 20), // CUSIP
+      web3.utils.fromAscii(cusip).slice(0, 20), // cusip
       faceValue, // FaceValue
       JUL_3_12_00_00_UTC_2020, // maturityDate
       custodianAddress, // custodian address
@@ -40,7 +40,7 @@ contract('ColTea', async (accounts) => {
     })
 
     it('checking the cusip', async function () {
-      assert.equal(CUSIP, web3.utils.toAscii(await colttoken.CUSIP.call()), 'The cusip was not set correctly')
+      assert.equal(cusip, web3.utils.toAscii(await colttoken.cusip.call()), 'The cusip was not set correctly')
     })
 
     it('checking the total face value', async function () {
