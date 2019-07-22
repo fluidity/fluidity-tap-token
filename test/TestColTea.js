@@ -133,4 +133,51 @@ contract('ColTea', async (accounts) => {
       assert.equal(currentSupply + addedSupply - burn3000 - burn500, (await colttoken.totalSupply.call()), 'The minted amount has not decreased the totalSupply by the expected amount')
     })
   })
+
+  describe('Test Whitelisting Functions', async () => {
+      it('ensure admin is in whitelist', async () => {
+        assert.isTrue(await colttoken.isWhitelisted.call(admin))
+      })
+      it('minting to non-whitelist', async () => {
+        let currentSupply = (await colttoken.totalSupply.call()).toNumber()
+        let addedSupply = 3500
+        let txreceipt = colttoken.mint(nonAdmin, addedSupply, { from: admin })
+        await truffleAssert.reverts(txreceipt)
+
+        assert.equal(currentSupply, (await colttoken.totalSupply.call()).toNumber(), 'The total supply incorrectly increase')
+      })
+
+      it('non-whitelist admin should not whitelist themselves', async () => {
+        let txreceipt = colttoken.addWhitelisted(nonAdmin, { from: nonAdmin })
+        await truffleAssert.reverts(txreceipt)
+      })
+
+      it('transferring to non-whitelist', async () => {
+
+        let addedSupply = 3500
+        let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+        await truffleAssert.passes(await txreceipt)
+        let adminBalance = (await colttoken.balanceOf.call(admin))
+
+        txreceipt = colttoken.transfer(nonAdmin, addedSupply, { from: admin })
+        await truffleAssert.reverts(txreceipt)
+       assert.equal(adminBalance, (await colttoken.balanceOf.call(admin)).toNumber())
+      })
+
+      it('whitelist nonAdmin to allow for successful transfer', async () => {
+
+        let addedSupply = 3500
+        let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+        await truffleAssert.passes(await txreceipt)
+        let adminBalance = (await colttoken.balanceOf.call(admin))
+
+        txreceipt = colttoken.addWhitelisted(nonAdmin, { from: admin })
+        await truffleAssert.passes(await txreceipt)
+
+
+        txreceipt = colttoken.transfer(nonAdmin, addedSupply, { from: admin })
+        await truffleAssert.passes(await txreceipt)
+        assert.equal(adminBalance, (await colttoken.balanceOf.call(nonAdmin)).toNumber())
+      })
+  })
 })
