@@ -7,7 +7,6 @@
     "url": "https://github.com/fluidity/col-tea"
   },
   "scripts": {
-    "test-migration": "node_modules/mocha/bin/mocha migrations/test_migration.js",
     "coverage": "node_modules/solidity-coverage/bin/exec.js",
     "truffle-coverage": "node_modules/truffle/build/cli.bundled.js --network coverage",
     "truffle-unlimited": "node_modules/truffle/build/cli.bundled.js --network localUnlimited",
