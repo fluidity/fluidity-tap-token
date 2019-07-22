@@ -61,7 +61,7 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
      * - the caller must have a balance of at least `amount`.
      */
     function transfer(address recipient, uint256 amount) public returns (bool) {
-        require(isWhitelisted(recipient), 'UNAUTHORIZED_RECIPIENT');
+        require(isWhitelisted(recipient), "UNAUTHORIZED_RECIPIENT");
         return super.transfer(recipient, amount);
     }
 
@@ -78,7 +78,7 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
      * `amount`.
      */
     function transferFrom(address sender, address recipient, uint256 amount) public returns (bool) {
-        require(isWhitelisted(recipient), 'UNAUTHORIZED_RECIPIENT');
+        require(isWhitelisted(recipient), "UNAUTHORIZED_RECIPIENT");
         return super.transferFrom(sender, recipient, amount);
     }
 
@@ -106,7 +106,7 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
      * - the caller must have the `MinterRole`.
      */
     function mint(address account, uint256 amount) public onlyMinter returns (bool) {
-        require(isWhitelisted(account), 'UNAUTHORIZED_RECIPIENT');
+        require(isWhitelisted(account), "UNAUTHORIZED_RECIPIENT");
         return super.mint(account, amount);
     }
 
