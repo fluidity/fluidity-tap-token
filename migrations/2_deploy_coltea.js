@@ -11,7 +11,7 @@ const custodianIdentifier = 1111
 module.exports = deployer => {
   deployer.deploy(ColTea,
       name, // name
-      name, // symbol
+      symbol, // symbol
       decimals, //decimals
       web3.utils.fromAscii(CUSIP).slice(0, 20), // CUSIP
       faceValue, // FaceValue
