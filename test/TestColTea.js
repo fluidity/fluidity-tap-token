@@ -1,8 +1,11 @@
 /* global artifacts, it, contract, assert web3 before */ // ignore those keywords when linting
-
+const truffleAssert = require('truffle-assertions')
+const helper = require('./util.js')
 const ColTea = artifacts.require('./ColTea')
 
 contract('ColTea', async (accounts) => {
+  const admin = accounts[0]
+  const nonAdmin = accounts[1]
   const name = '52 week US Treasuries'
   const symbol = 'USTB'
   const decimals = 6
@@ -12,6 +15,7 @@ contract('ColTea', async (accounts) => {
   const custodianAddress = '0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF'
   const custodianIdentifier = 1111
   let colttoken
+  let snapshotId
 
   before('deploy SMToken contract', async () => {
     colttoken = await ColTea.new(
@@ -24,6 +28,15 @@ contract('ColTea', async (accounts) => {
       custodianAddress, // custodian address
       custodianIdentifier // custodian numeric identifer)
     )
+  })
+
+  beforeEach(async () => {
+    let snapShot = await helper.takeSnapshot()
+    snapshotId = snapShot['result']
+  })
+
+  afterEach(async () => {
+    await helper.revertToSnapShot(snapshotId)
   })
 
   describe('Test Default Values', async () => {
@@ -57,6 +70,67 @@ contract('ColTea', async (accounts) => {
 
     it('checking the custodian identifier', async function () {
       assert.equal(custodianIdentifier, await colttoken.custodianIdentifier.call(), 'The custodian identifier was not set correctly')
+    })
+  })
+
+  describe('Test Minting and Burning', async () => {
+    it('minting by nonAdmin', async () => {
+      let currentSupply = (await colttoken.totalSupply.call()).toNumber()
+      let txreceipt = colttoken.mint(admin, 3500, { from: nonAdmin })
+      await truffleAssert.reverts(txreceipt)
+      assert.equal(currentSupply, (await colttoken.totalSupply.call()).toNumber(), 'The minted amount incorrectly increased by a non-Admin')
+    })
+
+    it('minting by admin', async () => {
+      let currentSupply = (await colttoken.totalSupply.call()).toNumber()
+      let addedSupply = 3500
+      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+      await truffleAssert.passes(await txreceipt)
+
+      assert.equal(currentSupply + addedSupply, (await colttoken.totalSupply.call()).toNumber(), 'The minted amount has not increased the totalSupply by the expected amount by the admin')
+    })
+
+    it('burn from nonAdmin should fail', async () => {
+      let currentSupply = (await colttoken.totalSupply.call()).toNumber()
+      let addedSupply = 3500
+      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+
+      txreceipt = colttoken.burn(1, { from: nonAdmin })
+      await truffleAssert.reverts(txreceipt)
+
+      assert.equal(currentSupply + addedSupply, (await colttoken.totalSupply.call()), 'The token amount incorrectly decreased by burning from non-admin')
+
+      txreceipt = colttoken.burnFrom(admin, 1, { from: nonAdmin })
+      await truffleAssert.reverts(txreceipt)
+
+      assert.equal(currentSupply + addedSupply, (await colttoken.totalSupply.call()), 'The token amount incorrectly decreased by burning from non-admin')
+    })
+
+    it('burn from admin succeeds', async () => {
+      let currentSupply = (await colttoken.totalSupply.call()).toNumber()
+      let addedSupply = 3500
+      let burn3000 = 3000
+      let burn500 = 500
+      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+      await truffleAssert.passes(await txreceipt)
+
+      txreceipt = colttoken.burn(burn3000, { from: admin })
+      await truffleAssert.passes(await txreceipt)
+
+      assert.equal(currentSupply + addedSupply - burn3000, (await colttoken.totalSupply.call()), 'The minted amount has not decreased the totalSupply by the expected amount')
+
+      txreceipt = colttoken.burnFrom(admin, 500, { from: admin })
+      await truffleAssert.reverts(txreceipt)
+
+      assert.equal(currentSupply + addedSupply - burn3000, (await colttoken.totalSupply.call()), 'The minted amount incorrectly decreased from burnFrom when tokens were not approved')
+
+      txreceipt = colttoken.approve(admin, addedSupply, { from: admin })
+      await truffleAssert.passes(await txreceipt)
+
+      txreceipt = colttoken.burnFrom(admin, 500, { from: admin })
+      await truffleAssert.passes(await txreceipt)
+
+      assert.equal(currentSupply + addedSupply - burn3000 - burn500, (await colttoken.totalSupply.call()), 'The minted amount has not decreased the totalSupply by the expected amount')
     })
   })
 })
