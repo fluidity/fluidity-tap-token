@@ -1,10 +1,10 @@
 {
-  "name": "col-tea",
+  "name": "fluidity-tap",
   "version": "0.1.0",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/fluidity/col-tea"
+    "url": "https://github.com/fluidity/fluidity-tap"
   },
   "scripts": {
     "coverage": "node_modules/solidity-coverage/bin/exec.js",

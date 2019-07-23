@@ -1,4 +1,4 @@
-const ColTea = artifacts.require("ColTea");
+const FluidityTap = artifacts.require("FluidityTap");
 const name = "US Treasuries"
 const symbol = 'USTR'
 const CUSIP = '912796VT3'
@@ -9,7 +9,7 @@ const custodianIdentifier = 'Brokerage_name'
 const custodianAccount = 12345678
 
 module.exports = deployer => {
-  deployer.deploy(ColTea,
+  deployer.deploy(FluidityTap,
       name, // name
       symbol, // symbol
       decimals, //decimals
