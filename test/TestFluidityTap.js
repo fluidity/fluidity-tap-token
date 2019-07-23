@@ -14,11 +14,11 @@ contract('FluidityTap', async (accounts) => {
   const JUL_3_12_00_00_UTC_2020 = 159377760015
   const custodianIdentifier = '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000'
   const custodianAccount = 1111
-  let colttoken
+  let fludityTapToken
   let snapshotId
 
-  before('deploy SMToken contract', async () => {
-    colttoken = await FluidityTap.new(
+  before('deploy FluidityTap contract', async () => {
+    fludityTapToken = await FluidityTap.new(
       name, // name
       symbol, // symbol
       decimals, // decimals
@@ -41,189 +41,189 @@ contract('FluidityTap', async (accounts) => {
 
   describe('Test Default Values', async () => {
     it('check the default name', async () => {
-      assert.equal(name, (await colttoken.name.call()), 'The name was not set correctly')
+      assert.equal(name, (await fludityTapToken.name.call()), 'The name was not set correctly')
     })
 
     it('checking the symbol', async function () {
-      assert.equal(symbol, await colttoken.symbol.call(), 'The symbol was not set correctly')
+      assert.equal(symbol, await fludityTapToken.symbol.call(), 'The symbol was not set correctly')
     })
 
     it('checking the decimals', async function () {
-      assert.equal(decimals, await colttoken.decimals.call(), 'The decimal was not set correctly')
+      assert.equal(decimals, await fludityTapToken.decimals.call(), 'The decimal was not set correctly')
     })
 
     it('checking the cusip', async function () {
-      assert.equal(cusip, web3.utils.toAscii(await colttoken.cusip.call()), 'The cusip was not set correctly')
+      assert.equal(cusip, web3.utils.toAscii(await fludityTapToken.cusip.call()), 'The cusip was not set correctly')
     })
 
     it('checking the total face value', async function () {
-      assert.equal(faceValue, await colttoken.totalFaceValue.call(), 'The total face value was not set correctly')
+      assert.equal(faceValue, await fludityTapToken.totalFaceValue.call(), 'The total face value was not set correctly')
     })
 
     it('checking the maturity date', async () => {
-      assert.equal(JUL_3_12_00_00_UTC_2020, await colttoken.maturityDate.call(), 'The maturity date was not set correctly')
+      assert.equal(JUL_3_12_00_00_UTC_2020, await fludityTapToken.maturityDate.call(), 'The maturity date was not set correctly')
     })
 
     it('checking the custodian identifier', async function () {
-      assert.equal(custodianIdentifier, await colttoken.custodianIdentifier.call(), 'The custodian identifier was not set correctly')
+      assert.equal(custodianIdentifier, await fludityTapToken.custodianIdentifier.call(), 'The custodian identifier was not set correctly')
     })
 
     it('checking the custodian account', async function () {
-      assert.equal(custodianAccount, await colttoken.custodianAccount.call(), 'The custodian account was not set correctly')
+      assert.equal(custodianAccount, await fludityTapToken.custodianAccount.call(), 'The custodian account was not set correctly')
     })
   })
 
   describe('Test Minting and Burning', async () => {
     it('minting by nonAdmin', async () => {
-      let currentSupply = (await colttoken.totalSupply.call()).toNumber()
-      let txreceipt = colttoken.mint(admin, 3500, { from: nonAdmin })
+      let currentSupply = (await fludityTapToken.totalSupply.call()).toNumber()
+      let txreceipt = fludityTapToken.mint(admin, 3500, { from: nonAdmin })
       await truffleAssert.reverts(txreceipt)
-      assert.equal(currentSupply, (await colttoken.totalSupply.call()).toNumber(), 'The minted amount incorrectly increased by a non-Admin')
+      assert.equal(currentSupply, (await fludityTapToken.totalSupply.call()).toNumber(), 'The minted amount incorrectly increased by a non-Admin')
     })
 
     it('minting by admin', async () => {
-      let currentSupply = (await colttoken.totalSupply.call()).toNumber()
+      let currentSupply = (await fludityTapToken.totalSupply.call()).toNumber()
       let addedSupply = 3500
-      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+      let txreceipt = fludityTapToken.mint(admin, addedSupply, { from: admin })
       await truffleAssert.passes(await txreceipt)
 
-      assert.equal(currentSupply + addedSupply, (await colttoken.totalSupply.call()).toNumber(), 'The minted amount has not increased the totalSupply by the expected amount by the admin')
+      assert.equal(currentSupply + addedSupply, (await fludityTapToken.totalSupply.call()).toNumber(), 'The minted amount has not increased the totalSupply by the expected amount by the admin')
     })
 
     it('burn from nonAdmin should fail', async () => {
-      let currentSupply = (await colttoken.totalSupply.call()).toNumber()
+      let currentSupply = (await fludityTapToken.totalSupply.call()).toNumber()
       let addedSupply = 3500
-      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+      let txreceipt = fludityTapToken.mint(admin, addedSupply, { from: admin })
 
-      txreceipt = colttoken.burn(1, { from: nonAdmin })
+      txreceipt = fludityTapToken.burn(1, { from: nonAdmin })
       await truffleAssert.reverts(txreceipt)
 
-      assert.equal(currentSupply + addedSupply, (await colttoken.totalSupply.call()), 'The token amount incorrectly decreased by burning from non-admin')
+      assert.equal(currentSupply + addedSupply, (await fludityTapToken.totalSupply.call()), 'The token amount incorrectly decreased by burning from non-admin')
 
-      txreceipt = colttoken.burnFrom(admin, 1, { from: nonAdmin })
+      txreceipt = fludityTapToken.burnFrom(admin, 1, { from: nonAdmin })
       await truffleAssert.reverts(txreceipt)
 
-      assert.equal(currentSupply + addedSupply, (await colttoken.totalSupply.call()), 'The token amount incorrectly decreased by burning from non-admin')
+      assert.equal(currentSupply + addedSupply, (await fludityTapToken.totalSupply.call()), 'The token amount incorrectly decreased by burning from non-admin')
     })
 
     it('burn from admin succeeds', async () => {
-      let currentSupply = (await colttoken.totalSupply.call()).toNumber()
+      let currentSupply = (await fludityTapToken.totalSupply.call()).toNumber()
       let addedSupply = 3500
       let burn3000 = 3000
       let burn500 = 500
-      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+      let txreceipt = fludityTapToken.mint(admin, addedSupply, { from: admin })
       await truffleAssert.passes(await txreceipt)
 
-      txreceipt = colttoken.burn(burn3000, { from: admin })
+      txreceipt = fludityTapToken.burn(burn3000, { from: admin })
       await truffleAssert.passes(await txreceipt)
 
-      assert.equal(currentSupply + addedSupply - burn3000, (await colttoken.totalSupply.call()), 'The minted amount has not decreased the totalSupply by the expected amount')
+      assert.equal(currentSupply + addedSupply - burn3000, (await fludityTapToken.totalSupply.call()), 'The minted amount has not decreased the totalSupply by the expected amount')
 
-      txreceipt = colttoken.burnFrom(admin, 500, { from: admin })
+      txreceipt = fludityTapToken.burnFrom(admin, 500, { from: admin })
       await truffleAssert.reverts(txreceipt)
 
-      assert.equal(currentSupply + addedSupply - burn3000, (await colttoken.totalSupply.call()), 'The minted amount incorrectly decreased from burnFrom when tokens were not approved')
+      assert.equal(currentSupply + addedSupply - burn3000, (await fludityTapToken.totalSupply.call()), 'The minted amount incorrectly decreased from burnFrom when tokens were not approved')
 
-      txreceipt = colttoken.approve(admin, addedSupply, { from: admin })
+      txreceipt = fludityTapToken.approve(admin, addedSupply, { from: admin })
       await truffleAssert.passes(await txreceipt)
 
-      txreceipt = colttoken.burnFrom(admin, 500, { from: admin })
+      txreceipt = fludityTapToken.burnFrom(admin, 500, { from: admin })
       await truffleAssert.passes(await txreceipt)
 
-      assert.equal(currentSupply + addedSupply - burn3000 - burn500, (await colttoken.totalSupply.call()), 'The minted amount has not decreased the totalSupply by the expected amount')
+      assert.equal(currentSupply + addedSupply - burn3000 - burn500, (await fludityTapToken.totalSupply.call()), 'The minted amount has not decreased the totalSupply by the expected amount')
     })
   })
 
   describe('Test Whitelisting Functions', async () => {
     it('ensure admin is in whitelist and whitelistAdmin', async () => {
-      assert.isTrue(await colttoken.isWhitelisted.call(admin))
-      assert.isTrue(await colttoken.isWhitelistAdmin.call(admin))
+      assert.isTrue(await fludityTapToken.isWhitelisted.call(admin))
+      assert.isTrue(await fludityTapToken.isWhitelistAdmin.call(admin))
     })
 
     it('ensure renounceWhitelistAdmin is no-op function', async () => {
-      await truffleAssert.passes(await colttoken.renounceWhitelistAdmin({ from: admin }))
+      await truffleAssert.passes(await fludityTapToken.renounceWhitelistAdmin({ from: admin }))
 
-      assert.isTrue(await colttoken.isWhitelistAdmin.call(admin), 'admin was able to renounce whitelist')
+      assert.isTrue(await fludityTapToken.isWhitelistAdmin.call(admin), 'admin was able to renounce whitelist')
     })
 
     it('ensure renounceWhitelisted(self) is no-op function', async () => {
-      await truffleAssert.passes(await colttoken.renounceWhitelisted({ from: admin }))
+      await truffleAssert.passes(await fludityTapToken.renounceWhitelisted({ from: admin }))
 
-      assert.isTrue(await colttoken.isWhitelisted.call(admin), 'admin was able to renounce whitelist')
+      assert.isTrue(await fludityTapToken.isWhitelisted.call(admin), 'admin was able to renounce whitelist')
     })
 
     it('ensure admin is in whitelist', async () => {
-      assert.isTrue(await colttoken.isWhitelisted.call(admin))
+      assert.isTrue(await fludityTapToken.isWhitelisted.call(admin))
     })
 
     it('minting to non-whitelist', async () => {
-      let currentSupply = (await colttoken.totalSupply.call()).toNumber()
+      let currentSupply = (await fludityTapToken.totalSupply.call()).toNumber()
       let addedSupply = 3500
-      let txreceipt = colttoken.mint(nonAdmin, addedSupply, { from: admin })
+      let txreceipt = fludityTapToken.mint(nonAdmin, addedSupply, { from: admin })
       await truffleAssert.reverts(txreceipt)
 
-      assert.equal(currentSupply, (await colttoken.totalSupply.call()).toNumber(), 'The total supply incorrectly increase')
+      assert.equal(currentSupply, (await fludityTapToken.totalSupply.call()).toNumber(), 'The total supply incorrectly increase')
     })
 
     it('non-whitelist admin should not whitelist themselves', async () => {
-      let txreceipt = colttoken.addWhitelisted(nonAdmin, { from: nonAdmin })
+      let txreceipt = fludityTapToken.addWhitelisted(nonAdmin, { from: nonAdmin })
       await truffleAssert.reverts(txreceipt)
     })
 
     it('transferring to non-whitelist', async () => {
       let addedSupply = 3500
-      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+      let txreceipt = fludityTapToken.mint(admin, addedSupply, { from: admin })
       await truffleAssert.passes(await txreceipt)
-      let adminBalance = (await colttoken.balanceOf.call(admin))
+      let adminBalance = (await fludityTapToken.balanceOf.call(admin))
 
-      txreceipt = colttoken.transfer(nonAdmin, addedSupply, { from: admin })
+      txreceipt = fludityTapToken.transfer(nonAdmin, addedSupply, { from: admin })
       await truffleAssert.reverts(txreceipt)
-      assert.equal(adminBalance, (await colttoken.balanceOf.call(admin)).toNumber())
+      assert.equal(adminBalance, (await fludityTapToken.balanceOf.call(admin)).toNumber())
     })
 
     it('transferFrom to non-whitelist', async () => {
       let addedSupply = 3500
-      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+      let txreceipt = fludityTapToken.mint(admin, addedSupply, { from: admin })
       await truffleAssert.passes(await txreceipt)
-      let adminBalance = (await colttoken.balanceOf.call(admin))
+      let adminBalance = (await fludityTapToken.balanceOf.call(admin))
 
-      txreceipt = colttoken.approve(nonAdmin, addedSupply, { from: admin })
+      txreceipt = fludityTapToken.approve(nonAdmin, addedSupply, { from: admin })
       await truffleAssert.passes(await txreceipt)
 
-      txreceipt = colttoken.transferFrom(admin, nonAdmin, addedSupply, { from: nonAdmin })
+      txreceipt = fludityTapToken.transferFrom(admin, nonAdmin, addedSupply, { from: nonAdmin })
       await truffleAssert.reverts(txreceipt)
-      assert.equal(adminBalance, (await colttoken.balanceOf.call(admin)).toNumber())
+      assert.equal(adminBalance, (await fludityTapToken.balanceOf.call(admin)).toNumber())
     })
 
     it('whitelist nonAdmin to allow for successful transfer', async () => {
       let addedSupply = 3500
-      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+      let txreceipt = fludityTapToken.mint(admin, addedSupply, { from: admin })
       await truffleAssert.passes(await txreceipt)
-      let adminBalance = (await colttoken.balanceOf.call(admin))
+      let adminBalance = (await fludityTapToken.balanceOf.call(admin))
 
-      txreceipt = colttoken.addWhitelisted(nonAdmin, { from: admin })
+      txreceipt = fludityTapToken.addWhitelisted(nonAdmin, { from: admin })
       await truffleAssert.passes(await txreceipt)
 
-      txreceipt = colttoken.transfer(nonAdmin, addedSupply, { from: admin })
+      txreceipt = fludityTapToken.transfer(nonAdmin, addedSupply, { from: admin })
       await truffleAssert.passes(await txreceipt)
-      assert.equal(adminBalance, (await colttoken.balanceOf.call(nonAdmin)).toNumber())
+      assert.equal(adminBalance, (await fludityTapToken.balanceOf.call(nonAdmin)).toNumber())
     })
 
     it('whitelist nonAdmin to allow for successful transferFrom', async () => {
       let addedSupply = 3500
-      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+      let txreceipt = fludityTapToken.mint(admin, addedSupply, { from: admin })
       await truffleAssert.passes(await txreceipt)
-      let adminBalance = (await colttoken.balanceOf.call(admin))
+      let adminBalance = (await fludityTapToken.balanceOf.call(admin))
 
-      txreceipt = colttoken.approve(nonAdmin, addedSupply, { from: admin })
-      await truffleAssert.passes(await txreceipt)
-
-      txreceipt = colttoken.addWhitelisted(nonAdmin, { from: admin })
+      txreceipt = fludityTapToken.approve(nonAdmin, addedSupply, { from: admin })
       await truffleAssert.passes(await txreceipt)
 
-      txreceipt = colttoken.transferFrom(admin, nonAdmin, addedSupply, { from: nonAdmin })
+      txreceipt = fludityTapToken.addWhitelisted(nonAdmin, { from: admin })
       await truffleAssert.passes(await txreceipt)
-      assert.equal(adminBalance, (await colttoken.balanceOf.call(nonAdmin)).toNumber())
+
+      txreceipt = fludityTapToken.transferFrom(admin, nonAdmin, addedSupply, { from: nonAdmin })
+      await truffleAssert.passes(await txreceipt)
+      assert.equal(adminBalance, (await fludityTapToken.balanceOf.call(nonAdmin)).toNumber())
     })
   })
 })
