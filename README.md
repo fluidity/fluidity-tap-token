@@ -1,5 +1,5 @@
 # Fluidity TAP Token: Treasuries Pilot
-Fluidity Tokenized Asset Portfolio (TAP) is a model to obtain leverage on real world assets using the MakerDAO Multi-Collateral Dai (MCD) credit system. This repository contains the smart contract that represents a Treasury bill as an ERC-20 token that is pledged to the MCD system as collateral. Created with the [Fluidity Truffle Box](https://github.com/fluidity/fluidity-truffle-box).
+[Fluidity Tokenized Asset Portfolio (TAP)](https://tap.fluidity.io/) is a model to obtain leverage on real world assets using the MakerDAO Multi-Collateral Dai (MCD) credit system. This repository contains the smart contract that represents a Treasury bill as an ERC-20 token that is pledged to the MCD system as collateral. Created with the [Fluidity Truffle Box](https://github.com/fluidity/fluidity-truffle-box).
 
 ## Features
 * Treasury bill data includes CUSIP, custodian address, and a custodian identifier. Custodian information is used by the position oracles to attest ownership.
