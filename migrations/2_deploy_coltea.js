@@ -1,12 +1,12 @@
 const ColTea = artifacts.require("ColTea");
-const name = "52 week US Treasuries"
-const symbol = 'USTB'
-const CUSIP = '912794SL4'
+const name = "US Treasuries"
+const symbol = 'USTR'
+const CUSIP = '912796VT3'
 const decimals = 6
-const faceValue = 100000
-const JUL_3_12_00_00_UTC_2020 = 159377760015
-const custodianAddress = '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef'
-const custodianIdentifier = 1111
+const faceValue = 1000
+const SEP_3_12_00_00_UTC_2019 = 1567468800
+const custodianIdentifier = 'Brokerage_name'
+const custodianAccount = 12345678
 
 module.exports = deployer => {
   deployer.deploy(ColTea,
@@ -15,8 +15,8 @@ module.exports = deployer => {
       decimals, //decimals
       web3.utils.fromAscii(CUSIP).slice(0, 20), // CUSIP
       faceValue, // FaceValue
-      JUL_3_12_00_00_UTC_2020, // maturityDate
-      custodianAddress, // custodian address
-      custodianIdentifier // custodian numeric identifer
+      SEP_3_12_00_00_UTC_2019, // maturityDate
+      web3.utils.fromAscii(custodianIdentifier).slice(0, 66), // custodian address
+      custodianAccount // custodian numeric identifer
     )
 };

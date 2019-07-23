@@ -18,8 +18,8 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
     bytes9 public cusip;
     uint256 public totalFaceValue;
     uint256 public maturityDate;
-    address public custodianAddress;
-    uint256 public custodianIdentifier;
+    bytes32 public custodianIdentifier;
+    uint256 public custodianAccount;
 
     /**
     * @notice The constructor for the ColTea.
@@ -29,8 +29,8 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
     * @param _cusip standard identifier of Treasury Bills
     * @param _totalFaceValue overal value of TBills in USD
     * @param _maturityDate the date that the TBill is matured
-    * @param _custodianAddress The address of the custodian
-    * @param _custodianIdentifier The numeric identifier of the custodian
+    * @param _custodianIdentifier The address of the custodian
+    * @param _custodianAccount The numeric identifier of the custodian
     */
     constructor(
         string memory _name,
@@ -39,21 +39,23 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
         bytes9 _cusip,
         uint256 _totalFaceValue,
         uint256 _maturityDate,
-        address _custodianAddress,
-        uint256 _custodianIdentifier
+        bytes32 _custodianIdentifier,
+        uint256 _custodianAccount
     )
     public
     ERC20Detailed(_name, _symbol, _decimals) {
         cusip = _cusip;
         totalFaceValue = _totalFaceValue;
         maturityDate = _maturityDate;
-        custodianAddress = _custodianAddress;
         custodianIdentifier = _custodianIdentifier;
+        custodianAccount = _custodianAccount;
+
         addWhitelisted(msg.sender); // ensure owner is whitelisted
     }
 
     /**
      * @dev See `IERC20.transfer`.
+     * @dev Can only transfer to whitelisted parties
      *
      * Requirements:
      *
@@ -67,9 +69,7 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
 
     /**
      * @dev See `IERC20.transferFrom`.
-     *
-     * Emits an `Approval` event indicating the updated allowance. This is not
-     * required by the EIP. See the note at the beginning of `ERC20`;
+     * @dev Can only transfer to whitelisted parties
      *
      * Requirements:
      * - `sender` and `recipient` cannot be the zero address.
@@ -83,7 +83,7 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
     }
 
     /**
-     * @dev Override to only be done by owner.
+     * @dev Can only be performed by owner.
      *
      */
     function burn(uint256 amount) public onlyOwner {
@@ -91,7 +91,7 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
     }
 
     /**
-     * @dev Override to only be done by owner.
+     * @dev Can only be performed by owner.
      *
      */
     function burnFrom(address account, uint256 amount) public onlyOwner {
@@ -100,7 +100,7 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
 
     /**
      * @dev See `ERC20._mint`.
-     *
+     * @dev recipient must be whitelisted
      * Requirements:
      *
      * - the caller must have the `MinterRole`.
@@ -121,7 +121,7 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
     /**
       *
       * @dev Disallow addresses from removing themselves
-      * from the whitelist.
+      * from the whitelist. No-op.
       *
       */
     function renounceWhitelisted() public {

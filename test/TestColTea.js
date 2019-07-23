@@ -12,8 +12,8 @@ contract('ColTea', async (accounts) => {
   const faceValue = 100000
   const cusip = '912794SL4'
   const JUL_3_12_00_00_UTC_2020 = 159377760015
-  const custodianAddress = '0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF'
-  const custodianIdentifier = 1111
+  const custodianIdentifier = '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000'
+  const custodianAccount = 1111
   let colttoken
   let snapshotId
 
@@ -25,8 +25,8 @@ contract('ColTea', async (accounts) => {
       web3.utils.fromAscii(cusip).slice(0, 20), // cusip
       faceValue, // FaceValue
       JUL_3_12_00_00_UTC_2020, // maturityDate
-      custodianAddress, // custodian address
-      custodianIdentifier // custodian numeric identifer)
+      custodianIdentifier, // custodian address
+      custodianAccount // custodian numeric identifer)
     )
   })
 
@@ -64,12 +64,12 @@ contract('ColTea', async (accounts) => {
       assert.equal(JUL_3_12_00_00_UTC_2020, await colttoken.maturityDate.call(), 'The maturity date was not set correctly')
     })
 
-    it('checking the custodian address', async function () {
-      assert.equal(custodianAddress, await colttoken.custodianAddress.call(), 'The custodian address was not set correctly')
-    })
-
     it('checking the custodian identifier', async function () {
       assert.equal(custodianIdentifier, await colttoken.custodianIdentifier.call(), 'The custodian identifier was not set correctly')
+    })
+
+    it('checking the custodian account', async function () {
+      assert.equal(custodianAccount, await colttoken.custodianAccount.call(), 'The custodian account was not set correctly')
     })
   })
 
@@ -135,9 +135,27 @@ contract('ColTea', async (accounts) => {
   })
 
   describe('Test Whitelisting Functions', async () => {
+    it('ensure admin is in whitelist and whitelistAdmin', async () => {
+      assert.isTrue(await colttoken.isWhitelisted.call(admin))
+      assert.isTrue(await colttoken.isWhitelistAdmin.call(admin))
+    })
+
+    it('ensure renounceWhitelistAdmin is no-op function', async () => {
+      await truffleAssert.passes(await colttoken.renounceWhitelistAdmin({ from: admin }))
+
+      assert.isTrue(await colttoken.isWhitelistAdmin.call(admin), 'admin was able to renounce whitelist')
+    })
+
+    it('ensure renounceWhitelisted(self) is no-op function', async () => {
+      await truffleAssert.passes(await colttoken.renounceWhitelisted({ from: admin }))
+
+      assert.isTrue(await colttoken.isWhitelisted.call(admin), 'admin was able to renounce whitelist')
+    })
+
     it('ensure admin is in whitelist', async () => {
       assert.isTrue(await colttoken.isWhitelisted.call(admin))
     })
+
     it('minting to non-whitelist', async () => {
       let currentSupply = (await colttoken.totalSupply.call()).toNumber()
       let addedSupply = 3500
@@ -163,6 +181,20 @@ contract('ColTea', async (accounts) => {
       assert.equal(adminBalance, (await colttoken.balanceOf.call(admin)).toNumber())
     })
 
+    it('transferFrom to non-whitelist', async () => {
+      let addedSupply = 3500
+      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+      await truffleAssert.passes(await txreceipt)
+      let adminBalance = (await colttoken.balanceOf.call(admin))
+
+      txreceipt = colttoken.approve(nonAdmin, addedSupply, { from: admin })
+      await truffleAssert.passes(await txreceipt)
+
+      txreceipt = colttoken.transferFrom(admin, nonAdmin, addedSupply, { from: nonAdmin })
+      await truffleAssert.reverts(txreceipt)
+      assert.equal(adminBalance, (await colttoken.balanceOf.call(admin)).toNumber())
+    })
+
     it('whitelist nonAdmin to allow for successful transfer', async () => {
       let addedSupply = 3500
       let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
@@ -173,6 +205,23 @@ contract('ColTea', async (accounts) => {
       await truffleAssert.passes(await txreceipt)
 
       txreceipt = colttoken.transfer(nonAdmin, addedSupply, { from: admin })
+      await truffleAssert.passes(await txreceipt)
+      assert.equal(adminBalance, (await colttoken.balanceOf.call(nonAdmin)).toNumber())
+    })
+
+    it('whitelist nonAdmin to allow for successful transferFrom', async () => {
+      let addedSupply = 3500
+      let txreceipt = colttoken.mint(admin, addedSupply, { from: admin })
+      await truffleAssert.passes(await txreceipt)
+      let adminBalance = (await colttoken.balanceOf.call(admin))
+
+      txreceipt = colttoken.approve(nonAdmin, addedSupply, { from: admin })
+      await truffleAssert.passes(await txreceipt)
+
+      txreceipt = colttoken.addWhitelisted(nonAdmin, { from: admin })
+      await truffleAssert.passes(await txreceipt)
+
+      txreceipt = colttoken.transferFrom(admin, nonAdmin, addedSupply, { from: nonAdmin })
       await truffleAssert.passes(await txreceipt)
       assert.equal(adminBalance, (await colttoken.balanceOf.call(nonAdmin)).toNumber())
     })
