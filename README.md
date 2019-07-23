@@ -1,18 +1,15 @@
-# Col-Tea ( ERC20 collateral holder) built using Fluidity Truffle Box
-
-Col-T stands for the ERC20 token that will be inserted into the CDP and used to withdraw Dai. This token can be used in conjunction with col-tea-scripts.
+# Fluidity TAP Token: Treasuries Pilot
+Fluidity Tokenized Asset Portfolio (TAP) is a model to obtain leverage on real world assets using the MakerDAO Multi-Collateral Dai (MCD) credit system. This repository contains the smart contract that represents a Treasury bill as an ERC-20 token that is pledged to the MCD system as collateral. Created with the [Fluidity Truffle Box](https://github.com/fluidity/fluidity-truffle-box).
 
 ## Features
-
-- Contains custom identifiying information for the treasury bill specifically CUSIP, custodian addess, and custodianIdentifier
-- The token is mintable by just the owner. The owner is a trusted party. The tokens will be minted after the TBills have been purchased. The attestation of assets owned can be verified through off-chain services. Work is in progress to ensure said information can be determined on-chain as well.
-- The token is burnable by just the owner. This action will take place when the TBills have been sold and they are no longer in posession of the custodian.
-- Contains transfer restrictions ensuring that the recipient of any tokens must be whitelisted either from minting or transferring
-- A set of whitelist admins have access to adding and removing parties (an event is emitted on any change to whitelist)
+* Treasury bill data includes CUSIP, custodian address, and a custodian identifier. Custodian information is used by the position oracles to attest ownership.
+* Only the owner of the token, the sponsor of the TAP, is able to mint tokens once Treasury bills have been purchased.
+* Only the owner of the token is able to burn tokens once the Treasury bills have been sold and are no longer held by the custodian.
+* Enforces transfer restrictions to ensure that any holder of the token is whitelisted. This comes into play during an MCD liquidation event and auction.
+* A set of whitelist administrators are able to modify the whitelist. An event is emitted when there is a change to the whitelist.
+Smart contract code has been flattened for verification on Etherscan.
 
 ## Package versions
-- solc: 0.5.10+commit.5a6ea5b1.Emscripten.clang
-- Open-Zeppelin v2.2
-- Truffle v5.0.26 (core: 5.0.26)
-
-## Code has been flattened as well for Etherscan
+* solc: 0.5.10+commit.5a6ea5b1.Emscripten.clang
+* Open-Zeppelin v2.2
+* Truffle v5.0.26 (core: 5.0.26)
