@@ -12,7 +12,7 @@ import "../node_modules/openzeppelin-solidity/contracts/access/roles/Whitelisted
   * @dev inherits ERC20Detailed, ERC20Burnable, ERC20Mintable
   * @dev deployer is the owner to start
   */
-contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, WhitelistedRole {
+contract FluidityTap is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, WhitelistedRole {
 
     // Parameters provided in the constructor
     bytes9 public cusip;
@@ -22,7 +22,7 @@ contract ColTea is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Whiteli
     uint256 public custodianAccount;
 
     /**
-    * @notice The constructor for the ColTea.
+    * @notice The constructor for the FluidityTap.
     * @param _name name of the token (per ERC20Detailed)
     * @param _symbol symbol of the token (per ERC20Detailed)
     * @param _decimals decimals of the token (per ERC20Detailed)

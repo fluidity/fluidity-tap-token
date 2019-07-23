@@ -1,9 +1,9 @@
 /* global artifacts, it, contract, assert web3 before */ // ignore those keywords when linting
 const truffleAssert = require('truffle-assertions')
 const helper = require('./util.js')
-const ColTea = artifacts.require('./ColTea')
+const FluidityTap = artifacts.require('./FluidityTap')
 
-contract('ColTea', async (accounts) => {
+contract('FluidityTap', async (accounts) => {
   const admin = accounts[0]
   const nonAdmin = accounts[1]
   const name = '52 week US Treasuries'
@@ -18,7 +18,7 @@ contract('ColTea', async (accounts) => {
   let snapshotId
 
   before('deploy SMToken contract', async () => {
-    colttoken = await ColTea.new(
+    colttoken = await FluidityTap.new(
       name, // name
       symbol, // symbol
       decimals, // decimals
