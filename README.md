@@ -13,3 +13,6 @@ Smart contract code has been flattened for verification on Etherscan.
 * solc: 0.5.10+commit.5a6ea5b1.Emscripten.clang
 * Open-Zeppelin v2.2
 * Truffle v5.0.26 (core: 5.0.26)
+
+## Contact Us
+Fluidity is a financial technology company based in Brooklyn, New York, on a mission to rebuild finance using blockchain technology. Reach us at team@fluidity.io for any inquiries related to this repository, the Tokenized Asset Portfolio (TAP), or working with our team.
