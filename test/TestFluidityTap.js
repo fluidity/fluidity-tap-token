@@ -12,6 +12,9 @@ contract('FluidityTap', async (accounts) => {
   const faceValue = 100000
   const cusip = '912794SL4'
   const JUL_3_12_00_00_UTC_2020 = 159377760015
+  const updatedfaceValue = 200000
+  const updateCusip = '501794GM1'
+  const AUG_12_12_00_00_UTC_2020 = 1597190400
   const custodianIdentifier = '0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef000000000000000000000000'
   const custodianAccount = 1111
   let fludityTapToken
@@ -225,5 +228,16 @@ contract('FluidityTap', async (accounts) => {
       await truffleAssert.passes(await txreceipt)
       assert.equal(adminBalance, (await fludityTapToken.balanceOf.call(nonAdmin)).toNumber())
     })
+  })
+
+  describe('Test updating the Treasury', async () => {
+    it('updating the treasury', async function () {
+      const txreceipt = await fludityTapToken.updateTreasury(web3.utils.fromAscii(updateCusip).slice(0, 20), updatedfaceValue, AUG_12_12_00_00_UTC_2020, {from: admin})
+      await truffleAssert.passes(await txreceipt)
+      assert.equal(updateCusip, web3.utils.toAscii(await fludityTapToken.cusip.call()), 'The cusip was not updated correctly')
+      assert.equal(updatedfaceValue, await fludityTapToken.totalFaceValue.call(), 'The total face value was not updated correctly')
+      assert.equal(AUG_12_12_00_00_UTC_2020, await fludityTapToken.maturityDate.call(), 'The maturity date was not updated correctly')
+  })
+
   })
 })
