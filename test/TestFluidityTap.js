@@ -232,12 +232,11 @@ contract('FluidityTap', async (accounts) => {
 
   describe('Test updating the Treasury', async () => {
     it('updating the treasury', async function () {
-      const txreceipt = await fludityTapToken.updateTreasury(web3.utils.fromAscii(updateCusip).slice(0, 20), updatedfaceValue, AUG_12_12_00_00_UTC_2020, {from: admin})
+      const txreceipt = await fludityTapToken.updateTreasury(web3.utils.fromAscii(updateCusip).slice(0, 20), updatedfaceValue, AUG_12_12_00_00_UTC_2020, { from: admin })
       await truffleAssert.passes(await txreceipt)
       assert.equal(updateCusip, web3.utils.toAscii(await fludityTapToken.cusip.call()), 'The cusip was not updated correctly')
       assert.equal(updatedfaceValue, await fludityTapToken.totalFaceValue.call(), 'The total face value was not updated correctly')
       assert.equal(AUG_12_12_00_00_UTC_2020, await fludityTapToken.maturityDate.call(), 'The maturity date was not updated correctly')
-  })
-
+    })
   })
 })
