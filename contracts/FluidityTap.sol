@@ -54,6 +54,21 @@ contract FluidityTap is ERC20Detailed, ERC20Burnable, ERC20Mintable, Ownable, Wh
     }
 
     /**
+      * @notice Sets a new Treasury
+      * @dev Can only be performed by owner.
+      */
+    function updateTreasury(
+        bytes9 _newCusip,
+        uint256 _newTotalFaceValue,
+        uint256 _newMaturityDate
+    )
+    external onlyOwner {
+        cusip = _newCusip;
+        totalFaceValue = _newTotalFaceValue;
+        maturityDate = _newMaturityDate;
+    }
+
+    /**
      * @dev See `IERC20.transfer`.
      * @dev Can only transfer to whitelisted parties
      *
